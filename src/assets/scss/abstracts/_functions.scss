@@ -1,0 +1,97 @@
+@use 'sass:map';
+// ================================== //
+// Access nested variable maps values //
+// ================================== //
+@function ss-var($variable, $keys...) {
+	$value: $variable;
+
+	@each $key in $keys {
+		$value: map-get($value, $key);
+	}
+
+	@return $value;
+}
+// ================================= //
+// String replace used for font face //
+// ================================= //
+@function str-replace($string, $search, $replace: '') {
+	$index: str-index($string, $search);
+
+	@if $index {
+		@return str-slice($string, 1, $index - 1) + $replace +
+			str-replace(
+				str-slice($string, $index + str-length($search)),
+				$search,
+				$replace
+			);
+	}
+
+	@return $string;
+}
+// ========================= //
+// Strip units from a number //
+// ==========================//
+@function strip-unit($num) {
+	@return $num / ($num * 0 + 1);
+}
+// ================================================== //
+// Сonvert a value to rem units based on a base value //
+// ================================================== //
+@function convert-to-rem($value, $base-value: $rem-base) {
+	$value: strip-unit($value) / strip-unit($base-value) * 1rem;
+	@if ($value == 0rem) {
+		$value: 0;
+	}
+	// Turn 0rem into 0
+	@return $value;
+}
+// =================================================== //
+// Сalculate multiple rem values from a list of values //
+// =================================================== //
+@function rem-calc($values, $base-value: $rem-base) {
+	$max: length($values);
+	@if $max == 1 {
+		@return convert-to-rem(nth($values, 1), $base-value);
+	}
+	$remValues: ();
+	@for $i from 1 through $max {
+		$remValues: append(
+			$remValues,
+			convert-to-rem(nth($values, $i), $base-value)
+		);
+	}
+	@return $remValues;
+}
+// =========================================== //
+// Calculate viewport width for target element //
+// =========================================== //
+@function vw($target-size, $design-width) {
+	// Returns the value in calc with interpolation
+	@return calc(#{$target-size} / #{$design-width} * 100vw);
+}
+// ============================================ //
+// Calculate viewport height for target element //
+// ============================================ //
+@function vh($target-size, $design-height) {
+	// Returns the value in calc with interpolation
+	@return calc(#{$target-size} / #{$design-height} * 100vh);
+}
+
+@function width-as-percentage($target-width, $parent-width) {
+	@return ($target-width / $parent-width) * 100%;
+}
+
+// Mixin to set adaptive font size based on design dimensions
+$rem-base: 16px;
+@function calc-relative-rem(
+	$design-width,
+	$design-height,
+	$base-font-size: $rem-base
+) {
+	$vw-unit: $design-width / 100;
+	$vh-unit: $design-height / 100;
+
+	$scale: $base-font-size / ($vw-unit + $vh-unit);
+
+	@return calc(#{$scale}vw + #{$scale}vh);
+}

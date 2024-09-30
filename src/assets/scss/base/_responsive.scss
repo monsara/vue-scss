@@ -1,0 +1,37 @@
+// Abstracts
+@use '../abstracts/' as *;
+
+html,
+body {
+  // font-size: 18px;
+  font-size: calc-relative-rem(390px, 844px); // 9:19
+
+  // @media (max-width: $xl) {
+  //   font-size: 17px;
+  // }
+
+  // @media (max-width: $lg) {
+  //   font-size: 16px;
+  // }
+
+  // @media (max-width: $md) {
+  //   font-size: 15px;
+  // }
+
+  @include tablet-mf {
+    font-size: calc-relative-rem(768px, 1024px); // 4:3
+  }
+
+  @include laptop-mf {
+    font-size: calc-relative-rem(1366px, 768px); // 16:9
+  }
+
+  @include computer-mf {
+    font-size: calc-relative-rem(1440px, 900px); // 16:9
+    font-size: 15px;
+  }
+
+  @include breakpoint-fixed(1920px) {
+    font-size: 15px;
+  }
+}
